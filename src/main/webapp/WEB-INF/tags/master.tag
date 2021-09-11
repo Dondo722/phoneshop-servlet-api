@@ -17,5 +17,8 @@
   <main>
     <jsp:doBody/>
   </main>
+  <p>
+    <h4>(c) Some good company</h4>
+  </p>
 </body>
 </html>
