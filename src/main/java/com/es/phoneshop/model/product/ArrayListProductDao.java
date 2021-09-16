@@ -9,7 +9,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 public class ArrayListProductDao implements ProductDao {
-    private static final ProductDao instance = new ArrayListProductDao();
+    private static final String SPACE = " ";
+    private static final Object instanceLock = new Object();
+    private static ProductDao instance;
 
     private final List<Product> products;
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -18,6 +20,11 @@ public class ArrayListProductDao implements ProductDao {
     private long currentId;
 
     public static synchronized ProductDao getInstance() {
+        if (instance == null) {
+            synchronized (instanceLock) {
+                instance = new ArrayListProductDao();
+            }
+        }
         return instance;
     }
 
@@ -43,15 +50,15 @@ public class ArrayListProductDao implements ProductDao {
         readLock.lock();
         try {
             Comparator<Product> comparator = (p1, p2) -> {
-                if (SortField.description == sortField) {
+                if (SortField.DESCRIPTION == sortField) {
                     return p1.getDescription().compareTo(p2.getDescription());
-                } else if (SortField.price == sortField) {
+                } else if (SortField.PRICE == sortField) {
                     return p1.getPrice().getCurrentPrice().compareTo(p2.getPrice().getCurrentPrice());
                 } else {
                     return 0;
                 }
             };
-            if (SortOrder.desc == sortOrder) {
+            if (SortOrder.DESC == sortOrder) {
                 comparator = comparator.reversed();
             }
             return products.stream()
@@ -100,13 +107,13 @@ public class ArrayListProductDao implements ProductDao {
         if (query == null || query.isEmpty()) {
             return 1;//default val
         }
-        int productDescriptionWordsNumber = product.getDescription().split(" ").length;
+        int productDescriptionWordsNumber = product.getDescription().split(SPACE).length;
         return  numberOfMatchesWithQuery(product,query) * 100 / productDescriptionWordsNumber;
     }
 
     private int numberOfMatchesWithQuery(Product product, String query) {
-        List<String> productDescriptions = Arrays.asList(product.getDescription().toLowerCase().split(" "));
-        List<String> queries = Arrays.asList(query.toLowerCase().split(" "));
+        List<String> productDescriptions = Arrays.asList(product.getDescription().toLowerCase().split(SPACE));
+        List<String> queries = Arrays.asList(query.toLowerCase().split(SPACE));
         List<Boolean> matches = queries.stream()
                 .map(productDescriptions::contains)
                 .filter(aBoolean -> aBoolean)

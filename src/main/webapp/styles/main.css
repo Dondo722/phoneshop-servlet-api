@@ -24,6 +24,12 @@ td {
 .price {
   text-align: right;
 }
+.priceHistory {
+  padding-left:1em;
+  display: inline-block;
+  width: 5em;
+}
+
 img.product-tile {
   max-width: 64px;
 }

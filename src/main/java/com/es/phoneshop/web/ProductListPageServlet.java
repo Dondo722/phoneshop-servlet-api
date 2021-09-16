@@ -26,8 +26,8 @@ public class ProductListPageServlet extends HttpServlet {
         String parameterSortField = request.getParameter("sort");
         String parameterSortOrder = request.getParameter("order");
 
-        SortField sortField = parameterSortField == null ? null : SortField.valueOf(parameterSortField);
-        SortOrder sortOrder = parameterSortOrder == null ? null : SortOrder.valueOf(parameterSortOrder);
+        SortField sortField = parameterSortField == null ? null : SortField.valueOf(parameterSortField.toUpperCase());
+        SortOrder sortOrder = parameterSortOrder == null ? null : SortOrder.valueOf(parameterSortOrder.toUpperCase());
 
         request.setAttribute("products", products.findProducts(query,sortField,sortOrder));
         request.getRequestDispatcher("/WEB-INF/pages/productList.jsp").forward(request, response);
