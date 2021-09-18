@@ -14,7 +14,7 @@ public class Price {
         this.priceBeginDate = priceBeginDate;
         this.currency = currency;
         priceHistory = new HashMap<>();
-        //priceHistory.put(priceBeginDate,currentPrice);
+        priceHistory.put(priceBeginDate,currentPrice);
     }
 
     public void changeCurrentPrice(BigDecimal newPrice, Date priceBeginDate) {

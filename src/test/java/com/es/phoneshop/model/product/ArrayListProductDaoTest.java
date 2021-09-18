@@ -92,4 +92,45 @@ public class ArrayListProductDaoTest
         query = query.toLowerCase(Locale.ROOT);
         assertTrue(productDesc.contains(query));
     }
+
+    @Test
+    public void testSortProductsByPriceWithASCOrderFromDao() {
+        List<Product> findProducts = productDao.findProducts("",SortField.PRICE,SortOrder.ASC);
+        assertNotNull(findProducts);
+        assertTrue(findProducts.size() > 2);
+        Product firstFound = findProducts.get(0);
+        Product secondFound = findProducts.get(1);
+        assertTrue(firstFound.getPrice().getCurrentPrice().compareTo(secondFound.getPrice().getCurrentPrice()) <= 0);
+    }
+
+    @Test
+    public void testSortProductsByPriceWithDESCOrderFromDao() {
+        List<Product> findProducts = productDao.findProducts("",SortField.PRICE,SortOrder.DESC);
+        assertNotNull(findProducts);
+        assertTrue(findProducts.size() > 2);
+        Product firstFound = findProducts.get(0);
+        Product secondFound = findProducts.get(1);
+        assertTrue(firstFound.getPrice().getCurrentPrice().compareTo(secondFound.getPrice().getCurrentPrice()) >= 0);
+    }
+
+    @Test
+    public void testSortProductsByDescriptionWithASCOrderFromDao() {
+        List<Product> findProducts = productDao.findProducts("",SortField.DESCRIPTION,SortOrder.ASC);
+        assertNotNull(findProducts);
+        assertTrue(findProducts.size() > 2);
+        Product firstFound = findProducts.get(0);
+        Product secondFound = findProducts.get(1);
+        assertTrue(firstFound.getDescription().compareTo(secondFound.getDescription()) <= 0);
+    }
+
+    @Test
+    public void testSortProductsByDescriptionWithDESCOrderFromDao() {
+        List<Product> findProducts = productDao.findProducts("",SortField.DESCRIPTION,SortOrder.DESC);
+        assertNotNull(findProducts);
+        assertTrue(findProducts.size() > 2);
+        Product firstFound = findProducts.get(0);
+        Product secondFound = findProducts.get(1);
+        assertTrue(firstFound.getDescription().compareTo(secondFound.getDescription()) >= 0);
+    }
+
 }

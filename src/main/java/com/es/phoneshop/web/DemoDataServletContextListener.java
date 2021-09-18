@@ -35,8 +35,8 @@ public class DemoDataServletContextListener implements ServletContextListener {
     private void saveSampleProducts(){
         Currency usd = Currency.getInstance("USD");
         Product samsung = new Product(1L, "sgs", "Samsung Galaxy S",
-                new Price(new BigDecimal(100),new  Date(12),usd), 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
-        samsung.getPrice().changeCurrentPrice( new BigDecimal(110),new Date());
+                new Price(new BigDecimal(100),new  Date(12),usd), 10000, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
+        samsung.getPrice().changeCurrentPrice( new BigDecimal(100000000),new Date());
 
         Product smsungS2 = new Product(2L, "sgs2", "Samsung Galaxy S II",
                 new Price(new BigDecimal(200),new  Date(13,2,4),usd), 0, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S%20II.jpg");
