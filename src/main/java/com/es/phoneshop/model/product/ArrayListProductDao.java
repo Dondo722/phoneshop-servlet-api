@@ -11,18 +11,20 @@ import java.util.stream.Collectors;
 public class ArrayListProductDao implements ProductDao {
     private static final String SPACE = " ";
     private static final Object instanceLock = new Object();
-    private static ProductDao instance;
 
+    private static volatile ProductDao instance;
     private final List<Product> products;
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private final Lock readLock = lock.readLock();
     private final Lock writeLock = lock.writeLock();
     private long currentId;
 
-    public static synchronized ProductDao getInstance() {
+    public static ProductDao getInstance() {
         if (instance == null) {
             synchronized (instanceLock) {
-                instance = new ArrayListProductDao();
+                if (instance == null) {
+                    instance = new ArrayListProductDao();
+                }
             }
         }
         return instance;
