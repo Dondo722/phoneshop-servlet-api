@@ -51,11 +51,9 @@ public class ProductDetailsPageServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            String quantityString = request.getParameter("quantity");
             Product product = parseProductFromRequest(request);
-
-            NumberFormat format = NumberFormat.getInstance(request.getLocale());
-            cartService.add(cartService.getCart(request), product, format.parse(quantityString).intValue());
+            int quantity = parseQuantityFromRequest(request,product);
+            cartService.add(cartService.getCart(request), product, quantity);
 
             response.sendRedirect(request.getContextPath() + "/products/" + product.getId() +
                     "?add_message=Item added to card successfully");
@@ -70,7 +68,15 @@ public class ProductDetailsPageServlet extends HttpServlet {
         }
     }
 
-
+    private int parseQuantityFromRequest(HttpServletRequest request, Product product) throws ParseException, OutOfStockException {
+        String quantityString = request.getParameter("quantity");
+        NumberFormat format = NumberFormat.getInstance(request.getLocale());
+        int quantity = format.parse(quantityString).intValue();
+        if (quantity <= 0) {
+            throw new OutOfStockException(product,quantity);
+        }
+        return quantity;
+    }
 
     private Product parseProductFromRequest(HttpServletRequest request) throws ParseProductFromRequestException {
         String stringId = request.getPathInfo();

@@ -5,18 +5,12 @@ import com.es.phoneshop.model.product.ViewedHistory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class DefaultViewedService implements ViewedService{
     private static final String VIEWED_PRODUCTS_SESSION_ATTRIBUTE = DefaultViewedService.class.getName() + ".viewed";
     private static final Object instanceLock = new Object();
+    private static final int VIEWED_MAX_SIZE = 3;
     private static volatile DefaultViewedService instance;
-
-    private final ReadWriteLock lock = new ReentrantReadWriteLock();
-    private final Lock readLock = lock.readLock();
-    private final Lock writeLock = lock.writeLock();
 
     public static DefaultViewedService getInstance() {
         if (instance == null) {
@@ -33,18 +27,13 @@ public class DefaultViewedService implements ViewedService{
     }
 
     @Override
-    public ViewedHistory getViewedHistory(HttpServletRequest request) {
-        readLock.lock();
-        try {
-            ViewedHistory viewedHistory = (ViewedHistory) request.getSession().getAttribute(VIEWED_PRODUCTS_SESSION_ATTRIBUTE);
-            if (viewedHistory == null) {
-                viewedHistory = new ViewedHistory();
-                request.getSession().setAttribute(VIEWED_PRODUCTS_SESSION_ATTRIBUTE, viewedHistory);
-            }
-            return viewedHistory;
-        } finally {
-            readLock.unlock();
+    public synchronized ViewedHistory getViewedHistory(HttpServletRequest request) {
+        ViewedHistory viewedHistory = (ViewedHistory) request.getSession().getAttribute(VIEWED_PRODUCTS_SESSION_ATTRIBUTE);
+        if (viewedHistory == null) {
+            viewedHistory = new ViewedHistory();
+            request.getSession().setAttribute(VIEWED_PRODUCTS_SESSION_ATTRIBUTE, viewedHistory);
         }
+        return viewedHistory;
     }
 
     /**
@@ -52,24 +41,19 @@ public class DefaultViewedService implements ViewedService{
      */
     @Override
     public synchronized void addProduct(ViewedHistory viewedHistory, Product product) {
-        writeLock.lock();
-        try {
-            List<Product> viewed = viewedHistory.getHistory();
-            Product cachedProduct = viewedHistory.getCache();
-            if (cachedProduct != product) {
-                viewedHistory.setCache(product);
-                if (cachedProduct == null) {
-                    return;
-                }
-                if (!viewed.contains(cachedProduct)) {
-                    viewed.add(0, cachedProduct);
-                }
-                if (viewed.size() > 3) {
-                    viewed.remove(3);
-                }
+        List<Product> viewed = viewedHistory.getHistory();
+        Product cachedProduct = viewedHistory.getCache();
+        if (cachedProduct != product) {
+            viewedHistory.setCache(product);
+            if (cachedProduct == null) {
+                return;
             }
-        } finally {
-            writeLock.unlock();
+            if (!viewed.contains(cachedProduct)) {
+                viewed.add(0, cachedProduct);
+            }
+            if (viewed.size() > VIEWED_MAX_SIZE) {
+                viewed.remove(VIEWED_MAX_SIZE);
+            }
         }
     }
 }

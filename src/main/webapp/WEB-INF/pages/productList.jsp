@@ -8,6 +8,16 @@
   <p>
     Welcome to Expert-Soft training!
   </p>
+  <c:if test="${not empty param.message}">
+    <p class="success">
+        ${param.message}
+    </p>
+  </c:if>
+  <c:if test="${not empty errors}">
+  <p class="error">
+    An error occurred while adding item to card
+  </p>
+  </c:if>
   <form>
     <input name="query" value="${param.query}">
     <button>Search</button>
@@ -21,14 +31,17 @@
           <tags:sortLink sort="description" order ="asc" />
           <tags:sortLink sort="description" order ="desc" />
         </td>
+        <td class="quantity">Quantity</td>
         <td class="price">
           Price
           <tags:sortLink sort="price" order ="asc" />
           <tags:sortLink sort="price" order ="desc" />
         </td>
+        <td></td>
       </tr>
     </thead>
-    <c:forEach var="product" items="${products}">
+    <c:forEach var="product" items="${products}" varStatus="status">
+      <form method="post" action="${pageContext.servletContext.contextPath}/products">
       <tr>
         <td>
           <img class="product-tile" src="${product.imageUrl}">
@@ -39,11 +52,27 @@
           </a>
         </td>
         <td>
+          <input name="quantity" value="${not empty errors[product.id] ? param.quantity : 1}" class="quantity">
+          <c:if test="${not empty errors}">
+          <div class="error">
+              ${errors[product.id]}
+          </div>
+          </c:if>
+          <input type="hidden" name="productId" value="${product.id}">
+
+        </td>
+        <td class="price">
           <a href="${pageContext.servletContext.contextPath}/pricehistory/${product.id}">
-          <fmt:formatNumber value="${product.price.currentPrice}" type="currency" currencySymbol="${product.price.currency.symbol}"/>
+            <fmt:formatNumber  value="${product.price.currentPrice}" type="currency" currencySymbol="${product.price.currency.symbol}"/>
           </a>
         </td>
+        <td>
+          <button>
+            Add to cart
+          </button>
+        </td>
       </tr>
+      </form>
     </c:forEach>
   </table>
   <c:if test="${not empty viewed.history}">

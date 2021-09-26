@@ -1,8 +1,9 @@
 package com.es.phoneshop.model.product;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Product {
+public class Product implements Serializable {
     private Long id;
     private String code;
     private String description;
@@ -85,8 +86,11 @@ public class Product {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return stock == product.stock && Objects.equals(id, product.id) && Objects.equals(code, product.code) &&
-                Objects.equals(description, product.description) && Objects.equals(price, product.price)  &&
+        return  stock == product.stock &&
+                Objects.equals(id, product.id) &&
+                Objects.equals(code, product.code) &&
+                Objects.equals(description, product.description) &&
+                Objects.equals(price, product.price) &&
                 Objects.equals(imageUrl, product.imageUrl);
     }
 

@@ -1,9 +1,10 @@
 package com.es.phoneshop.model.product;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
 
-public class Price {
+public class Price implements Serializable {
     private BigDecimal currentPrice;
     private Date priceBeginDate;
     private final Currency currency;
@@ -44,8 +45,9 @@ public class Price {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Price price = (Price) o;
-        return Objects.equals(currentPrice, price.currentPrice) &&
-                Objects.equals(priceBeginDate, price.priceBeginDate) && Objects.equals(currency, price.currency) &&
+        return  Objects.equals(currentPrice, price.currentPrice) &&
+                Objects.equals(priceBeginDate, price.priceBeginDate) &&
+                Objects.equals(currency, price.currency) &&
                 Objects.equals(priceHistory, price.priceHistory);
     }
 
