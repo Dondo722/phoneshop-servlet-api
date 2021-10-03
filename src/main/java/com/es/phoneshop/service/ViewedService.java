@@ -7,5 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface ViewedService {
     ViewedHistory getViewedHistory(HttpServletRequest request);
-    void addProduct(ViewedHistory viewedHistory,Product product);
+
+    void addProduct(ViewedHistory viewedHistory, Product product);
 }

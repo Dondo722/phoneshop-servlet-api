@@ -1,7 +1,7 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.model.product.ArrayListProductDao;
-import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.dao.ArrayListProductDao;
+import com.es.phoneshop.dao.ProductDao;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,7 +23,7 @@ public class ProductPriceHistoryPageServlet extends HttpServlet {
         try {
             String stringId = request.getPathInfo();
             Long productId = Long.parseLong(stringId.substring(1));
-            request.setAttribute("product",products.getProduct(productId));
+            request.setAttribute("product", products.getProduct(productId));
             request.getRequestDispatcher("/WEB-INF/pages/productPriceHistory.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             response.sendError(500);

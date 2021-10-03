@@ -1,6 +1,9 @@
-package com.es.phoneshop.model.product;
+package com.es.phoneshop.dao;
 
-import com.es.phoneshop.model.product.exception.ProductNotFoundException;
+import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.model.product.SortField;
+import com.es.phoneshop.model.product.SortOrder;
+import com.es.phoneshop.dao.exception.ProductNotFoundException;
 
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -64,8 +67,8 @@ public class ArrayListProductDao implements ProductDao {
                 comparator = comparator.reversed();
             }
             return products.stream()
-                    .filter(product -> isProductSuitableForQuery(product,query))
-                    .sorted((p1, p2) -> coincidences(p2,query) - coincidences(p1,query))
+                    .filter(product -> isProductSuitableForQuery(product, query))
+                    .sorted((p1, p2) -> coincidences(p2, query) - coincidences(p1, query))
                     .sorted(comparator)
                     .collect(Collectors.toList());
         } finally {
@@ -110,7 +113,7 @@ public class ArrayListProductDao implements ProductDao {
             return 1;//default val
         }
         int productDescriptionWordsNumber = product.getDescription().split(SPACE).length;
-        return  numberOfMatchesWithQuery(product,query) * 100 / productDescriptionWordsNumber;
+        return numberOfMatchesWithQuery(product, query) * 100 / productDescriptionWordsNumber;
     }
 
     private int numberOfMatchesWithQuery(Product product, String query) {

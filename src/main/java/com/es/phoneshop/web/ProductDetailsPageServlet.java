@@ -1,9 +1,9 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.cart.exception.OutOfStockException;
-import com.es.phoneshop.model.product.ArrayListProductDao;
+import com.es.phoneshop.dao.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.model.product.ViewedHistory;
 import com.es.phoneshop.service.CartService;
 import com.es.phoneshop.service.DefaultCartService;
@@ -52,7 +52,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             Product product = parseProductFromRequest(request);
-            int quantity = parseQuantityFromRequest(request,product);
+            int quantity = parseQuantityFromRequest(request, product);
             cartService.add(cartService.getCart(request), product, quantity);
 
             response.sendRedirect(request.getContextPath() + "/products/" + product.getId() +
@@ -61,10 +61,10 @@ public class ProductDetailsPageServlet extends HttpServlet {
             response.sendError(500);
         } catch (ParseException e) {
             request.setAttribute("error", "not a number");
-            doGet(request,response);
+            doGet(request, response);
         } catch (OutOfStockException e) {
             request.setAttribute("error", "out of stock, available " + e.getStockAvailable());
-            doGet(request,response);
+            doGet(request, response);
         }
     }
 
@@ -73,7 +73,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
         NumberFormat format = NumberFormat.getInstance(request.getLocale());
         int quantity = format.parse(quantityString).intValue();
         if (quantity <= 0) {
-            throw new OutOfStockException(product,quantity);
+            throw new OutOfStockException(product, quantity);
         }
         return quantity;
     }

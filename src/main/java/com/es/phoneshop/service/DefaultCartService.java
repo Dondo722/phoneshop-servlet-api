@@ -75,6 +75,12 @@ public class DefaultCartService implements CartService {
         recalculateCart(cart);
     }
 
+    @Override
+    public void clear(Cart cart) {
+        cart.getItems().clear();
+        recalculateCart(cart);
+    }
+
     private CartItem getCartItemByProduct(Cart cart, Product product) {
         return cart.getItems().stream()
                 .filter(i -> i.getProduct().equals(product))
@@ -92,6 +98,6 @@ public class DefaultCartService implements CartService {
                         .filter(cartItem -> cartItem.getProduct().equals(i.getProduct()))
                         .map(item -> BigDecimal.valueOf(item.getQuantity()))
                         .findAny().orElse(BigDecimal.ONE)))
-                .reduce(BigDecimal.ZERO,BigDecimal::add));
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
     }
 }

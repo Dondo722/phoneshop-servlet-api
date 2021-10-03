@@ -2,9 +2,9 @@ package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.exception.OutOfStockException;
-import com.es.phoneshop.model.product.ArrayListProductDao;
+import com.es.phoneshop.dao.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.service.CartService;
 import com.es.phoneshop.service.DefaultCartService;
 import com.es.phoneshop.web.exception.ParseProductFromRequestException;
@@ -19,7 +19,7 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CartPageServlet  extends HttpServlet {
+public class CartPageServlet extends HttpServlet {
     private ProductDao products;
     private CartService cartService;
 
@@ -38,7 +38,7 @@ public class CartPageServlet  extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Map<Long,String> errors = new HashMap<>();
+        Map<Long, String> errors = new HashMap<>();
         Product product = new Product();
         int quantity;
         try {
@@ -48,8 +48,8 @@ public class CartPageServlet  extends HttpServlet {
             Cart cart = cartService.getCart(request);
             for (int i = 0; i < productIds.length; i++) {
                 product = parseProductFromString(productIds[i]);
-                quantity = parseQuantityFromString(quantities[i],request,product);
-                cartService.update(cart,product,quantity);
+                quantity = parseQuantityFromString(quantities[i], request, product);
+                cartService.update(cart, product, quantity);
             }
             response.sendRedirect(request.getContextPath() + "/cart?message=Cart updated successfully");
         } catch (ParseProductFromRequestException e) {
@@ -57,11 +57,11 @@ public class CartPageServlet  extends HttpServlet {
         } catch (ParseException e) {
             errors.put(product.getId(), "not a number");
             request.setAttribute("errors", errors);
-            doGet(request,response);
+            doGet(request, response);
         } catch (OutOfStockException e) {
             errors.put(product.getId(), "out of stock, available " + e.getStockAvailable());
             request.setAttribute("errors", errors);
-            doGet(request,response);
+            doGet(request, response);
         }
     }
 
@@ -70,7 +70,7 @@ public class CartPageServlet  extends HttpServlet {
         NumberFormat format = NumberFormat.getInstance(request.getLocale());
         int quantity = format.parse(quantityString).intValue();
         if (quantity <= 0) {
-            throw new OutOfStockException(product,quantity);
+            throw new OutOfStockException(product, quantity);
         }
         return quantity;
     }

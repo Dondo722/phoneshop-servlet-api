@@ -24,7 +24,7 @@ td {
 .price, .quantity {
   text-align: right;
 }
-.error {
+.error, .required{
   color: red;
 }
 .success {

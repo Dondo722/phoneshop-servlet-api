@@ -1,5 +1,7 @@
 package com.es.phoneshop.web;
 
+import com.es.phoneshop.dao.ArrayListProductDao;
+import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.exception.OutOfStockException;
 import com.es.phoneshop.model.product.*;
@@ -42,21 +44,21 @@ public class ProductListPageServlet extends HttpServlet {
         SortOrder sortOrder = parameterSortOrder == null ? null : SortOrder.valueOf(parameterSortOrder.toUpperCase());
 
         viewedService.addProduct(viewedService.getViewedHistory(request), null);
-        request.setAttribute("products", products.findProducts(query,sortField,sortOrder));
+        request.setAttribute("products", products.findProducts(query, sortField, sortOrder));
         request.setAttribute("viewed", viewedService.getViewedHistory(request));
         request.getRequestDispatcher("/WEB-INF/pages/productList.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Map<Long,String> error = new HashMap<>();
+        Map<Long, String> error = new HashMap<>();
         Product product = new Product();
         int quantity;
         try {
-            product =  parseProductFromString(request.getParameter("productId"));
-            quantity = parseQuantityFromString(request.getParameter("quantity"),request,product);
+            product = parseProductFromString(request.getParameter("productId"));
+            quantity = parseQuantityFromString(request.getParameter("quantity"), request, product);
             Cart cart = cartService.getCart(request);
-            cartService.add(cart,product,quantity);
+            cartService.add(cart, product, quantity);
             response.sendRedirect(request.getContextPath() + "/products?message= Item added to cart successfully");
         } catch (ParseProductFromRequestException e) {
             response.sendError(500);
@@ -75,7 +77,7 @@ public class ProductListPageServlet extends HttpServlet {
         NumberFormat format = NumberFormat.getInstance(request.getLocale());
         int quantity = format.parse(quantityString).intValue();
         if (quantity <= 0) {
-            throw new OutOfStockException(product,quantity);
+            throw new OutOfStockException(product, quantity);
         }
         return quantity;
     }
