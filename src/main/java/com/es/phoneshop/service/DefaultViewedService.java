@@ -6,7 +6,7 @@ import com.es.phoneshop.model.product.ViewedHistory;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-public class DefaultViewedService implements ViewedService{
+public class DefaultViewedService implements ViewedService {
     private static final String VIEWED_PRODUCTS_SESSION_ATTRIBUTE = DefaultViewedService.class.getName() + ".viewed";
     private static final Object instanceLock = new Object();
     private static final int VIEWED_MAX_SIZE = 3;

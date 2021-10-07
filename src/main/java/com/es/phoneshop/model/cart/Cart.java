@@ -44,7 +44,7 @@ public class Cart implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Cart cart = (Cart) o;
-        return  totalQuantity == cart.totalQuantity &&
+        return totalQuantity == cart.totalQuantity &&
                 Objects.equals(items, cart.items) &&
                 Objects.equals(totalCost, cart.totalCost);
     }

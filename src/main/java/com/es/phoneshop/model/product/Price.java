@@ -8,20 +8,20 @@ public class Price implements Serializable {
     private BigDecimal currentPrice;
     private Date priceBeginDate;
     private final Currency currency;
-    private final Map<Date,BigDecimal> priceHistory;
+    private final Map<Date, BigDecimal> priceHistory;
 
     public Price(BigDecimal currentPrice, Date priceBeginDate, Currency currency) {
         this.currentPrice = currentPrice;
         this.priceBeginDate = priceBeginDate;
         this.currency = currency;
         priceHistory = new HashMap<>();
-        priceHistory.put(priceBeginDate,currentPrice);
+        priceHistory.put(priceBeginDate, currentPrice);
     }
 
     public void changeCurrentPrice(BigDecimal newPrice, Date priceBeginDate) {
         this.currentPrice = newPrice;
         this.priceBeginDate = priceBeginDate;
-        priceHistory.put(priceBeginDate,currentPrice);
+        priceHistory.put(priceBeginDate, currentPrice);
     }
 
     public BigDecimal getCurrentPrice() {
@@ -45,7 +45,7 @@ public class Price implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Price price = (Price) o;
-        return  Objects.equals(currentPrice, price.currentPrice) &&
+        return Objects.equals(currentPrice, price.currentPrice) &&
                 Objects.equals(priceBeginDate, price.priceBeginDate) &&
                 Objects.equals(currency, price.currency) &&
                 Objects.equals(priceHistory, price.priceHistory);

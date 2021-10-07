@@ -7,7 +7,9 @@ public class Product implements Serializable {
     private Long id;
     private String code;
     private String description;
-    /** null means there is no price because the product is outdated or new */
+    /**
+     * null means there is no price because the product is outdated or new
+     */
     private Price price;
     private int stock;
     private String imageUrl;
@@ -86,7 +88,7 @@ public class Product implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return  stock == product.stock &&
+        return stock == product.stock &&
                 Objects.equals(id, product.id) &&
                 Objects.equals(code, product.code) &&
                 Objects.equals(description, product.description) &&
@@ -97,5 +99,48 @@ public class Product implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id, code, description, price, stock, imageUrl);
+    }
+
+    public static Builder newBuilder() {
+        return new Product().new Builder();
+    }
+
+    public class Builder {
+        private Builder() {
+        }
+
+        public Builder setId(Long id) {
+            Product.this.id = id;
+            return this;
+        }
+
+        public Builder setCode(String code) {
+            Product.this.code = code;
+            return this;
+        }
+
+        public Builder setDescription(String description) {
+            Product.this.description = description;
+            return this;
+        }
+
+        public Builder setPrice(Price price) {
+            Product.this.price = price;
+            return this;
+        }
+
+        public Builder setStock(int stock) {
+            Product.this.stock = stock;
+            return this;
+        }
+
+        public Builder setImageUrl(String imageUrl) {
+            Product.this.imageUrl = imageUrl;
+            return this;
+        }
+
+        public Product build() {
+            return Product.this;
+        }
     }
 }

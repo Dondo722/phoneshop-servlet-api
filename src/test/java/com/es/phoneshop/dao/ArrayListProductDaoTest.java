@@ -1,6 +1,12 @@
-package com.es.phoneshop.model.product;
+package com.es.phoneshop.dao;
 
-import com.es.phoneshop.model.product.exception.ProductNotFoundException;
+import com.es.phoneshop.dao.ArrayListProductDao;
+import com.es.phoneshop.dao.ProductDao;
+import com.es.phoneshop.dao.exception.ProductNotFoundException;
+import com.es.phoneshop.model.product.Price;
+import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.model.product.SortField;
+import com.es.phoneshop.model.product.SortOrder;
 import com.es.phoneshop.web.DemoDataServletContextListener;
 import org.junit.Before;
 import org.junit.Test;
@@ -95,7 +101,7 @@ public class ArrayListProductDaoTest
 
     @Test
     public void testSortProductsByPriceWithASCOrderFromDao() {
-        List<Product> findProducts = productDao.findProducts("",SortField.PRICE,SortOrder.ASC);
+        List<Product> findProducts = productDao.findProducts("", SortField.PRICE, SortOrder.ASC);
         assertNotNull(findProducts);
         assertTrue(findProducts.size() > 2);
         Product firstFound = findProducts.get(0);

@@ -4,4 +4,10 @@
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
 <jsp:useBean id="cart" type="com.es.phoneshop.model.cart.Cart" scope="request"/>
-Cart: ${cart.totalQuantity} items cost ${cart.totalCost}
+<div>
+<a href="${pageContext.servletContext.contextPath}/cart">Cart</a>
+    : ${cart.totalQuantity} items cost
+    <c:if test="${not empty cart.items}">
+    <fmt:formatNumber value="${cart.totalCost}" type="currency" currencySymbol="${cart.items.get(0).product.price.currency.symbol}"/>
+    </c:if>
+</div>

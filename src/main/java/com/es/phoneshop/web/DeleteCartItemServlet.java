@@ -1,9 +1,9 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.cart.Cart;
-import com.es.phoneshop.model.product.ArrayListProductDao;
+import com.es.phoneshop.dao.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.service.CartService;
 import com.es.phoneshop.service.DefaultCartService;
 import com.es.phoneshop.web.exception.ParseProductFromRequestException;
@@ -30,7 +30,7 @@ public class DeleteCartItemServlet extends HttpServlet {
         try {
             Product product = parseProductFromRequest(request);
             Cart cart = cartService.getCart(request);
-            cartService.delete(cart,product);
+            cartService.delete(cart, product);
             response.sendRedirect(request.getContextPath() + "/cart?message=Cart item deleted successfully");
         } catch (ParseProductFromRequestException e) {
             response.sendError(500);

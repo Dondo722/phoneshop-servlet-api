@@ -84,11 +84,13 @@
             </td>
           </tr>
       </table>
-      <p>
+      <div>
       <button> Update </button>
-      </p>
+      </div>
       </form>
-      <form id="deleteCartItem" method="post">
+      <form action="${pageContext.servletContext.contextPath}/checkout">
+        <button > Order </button>
       </form>
+      <form id="deleteCartItem" method="post"></form>
     </c:if>
 </tags:master>
