@@ -6,6 +6,9 @@
 <jsp:useBean id="order" type="com.es.phoneshop.model.order.Order" scope="request"/>
 <tags:master pageTitle="Checkout page">
   <p>
+      ${page}
+  </p>
+  <p>
     Cart: ${order}
   </p>
   <c:if test="${not empty param.message}">
@@ -96,40 +99,55 @@
             </td>
           </tr>
       </table>
-      <h1>Order data:</h1>
       <table>
-        <tags:checkoutTableRaw name="firstName" label="First name" order="${order}" errors="${errors}"></tags:checkoutTableRaw>
-        <tags:checkoutTableRaw name="lastName" label="Last name" order="${order}" errors="${errors}"></tags:checkoutTableRaw>
-        <tags:checkoutTableRaw name="phone" label="Phone" order="${order}" errors="${errors}"></tags:checkoutTableRaw>
-        <tags:checkoutTableRaw name="deliveryDate" label="Delivery date" order="${order}" errors="${errors}"></tags:checkoutTableRaw>
-        <tags:checkoutTableRaw name="address" label="Address" order="${order}" errors="${errors}"></tags:checkoutTableRaw>
-        <tr>
-          <td>Payment method<span class="required">*</span></td>
-          <td>
-            <select name="paymentMethod">
+      <h1>Order data:</h1>
+        <c:if test="${page eq 'overview'}">
+            <tags:orderOverviewTableRaw name="firstName" label="First name" order="${order}"></tags:orderOverviewTableRaw>
+            <tags:orderOverviewTableRaw  name="lastName" label="Last name" order="${order}"></tags:orderOverviewTableRaw>
+            <tags:orderOverviewTableRaw  name="phone" label="Phone" order="${order}"></tags:orderOverviewTableRaw>
+            <tags:orderOverviewTableRaw  name="deliveryDate" label="Delivery date" order="${order}"></tags:orderOverviewTableRaw>
+            <tags:orderOverviewTableRaw  name="address" label="Address" order="${order}"></tags:orderOverviewTableRaw>
+            <tr>
+              <td>Payment method</td>
+              <td>
+                  ${order.paymentMethod}
+              </td>
+            </tr>
+        </c:if>
+        <c:if test="${page eq 'checkout'}">
+          <tags:checkoutTableRaw name="firstName" label="First name" order="${order}" errors="${errors}" />
+          <tags:checkoutTableRaw name="lastName" label="Last name" order="${order}" errors="${errors}" />
+          <tags:checkoutTableRaw name="phone" label="Phone" order="${order}" errors="${errors}" placeholder="8(XXX)XXX-XXXX"/>
+          <tags:checkoutTableRaw name="deliveryDate" label="Delivery date" order="${order}" errors="${errors}" type="date"/>
+          <tags:checkoutTableRaw name="address" label="Address" order="${order}" errors="${errors}"/>
+          <tr>
+            <td>Payment method<span class="required">*</span></td>
+            <td>
+              <select name="paymentMethod">
                 <option></option>
                 <c:forEach var="method" items="${paymentMethods}">
                   <c:choose>
-                  <c:when test="${param.paymentMethod == method}">
-                    <option selected>${method}</option>
-                  </c:when>
-                  <c:otherwise>
-                    <option>${method}</option>
-                  </c:otherwise>
+                    <c:when test="${param.paymentMethod == method}">
+                      <option selected>${method}</option>
+                    </c:when>
+                    <c:otherwise>
+                      <option>${method}</option>
+                    </c:otherwise>
                   </c:choose>
                 </c:forEach>
-            </select>
-            <c:if test="${not empty errors}">
-              <div class="error">
-                  ${errors["paymentMethod"]}
-              </div>
-            </c:if>
-          </td>
-        </tr>
+              </select>
+              <c:if test="${not empty errors}">
+                <div class="error">
+                    ${errors["paymentMethod"]}
+                </div>
+              </c:if>
+            </td>
+          </tr>
+          <p>
+            <button>Confirm the order</button>
+          </p>
+      </c:if>
       </table>
-      <p>
-      <button>Confirm the order</button>
-      </p>
     </form>
     </c:if>
 </tags:master>

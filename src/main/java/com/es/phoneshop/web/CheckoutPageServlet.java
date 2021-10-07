@@ -7,6 +7,7 @@ import com.es.phoneshop.service.CartService;
 import com.es.phoneshop.service.DefaultCartService;
 import com.es.phoneshop.service.DefaultOrderService;
 import com.es.phoneshop.service.OrderService;
+import com.es.phoneshop.util.CheckoutRegex;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -23,7 +23,7 @@ public class CheckoutPageServlet extends HttpServlet {
     private CartService cartService;
     private OrderService orderService;
     private static final String DELIVERY_DATE_PARAM = "deliveryDate";
-    private static final String CHECKOUT_PAGE_JSP = "/WEB-INF/pages/checkoutPage.jsp";
+    private static final String CHECKOUT_PAGE_JSP = "/WEB-INF/pages/orderCheckoutOverview.jsp";
 
 
     @Override
@@ -36,6 +36,7 @@ public class CheckoutPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Cart cart = cartService.getCart(request);
+        request.setAttribute("page", "checkout");
         request.setAttribute("order", orderService.getOrder(cart));
         request.setAttribute("paymentMethods", orderService.getPaymentMethods());
         request.getRequestDispatcher(CHECKOUT_PAGE_JSP).forward(request, response);
@@ -60,6 +61,7 @@ public class CheckoutPageServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/order/overview/" + order.getSecureId());
         } else {
             request.setAttribute("errors", errors);
+            request.setAttribute("page", "checkout");
             request.setAttribute("order", order);
             request.setAttribute("paymentMethods", orderService.getPaymentMethods());
             request.getRequestDispatcher(CHECKOUT_PAGE_JSP).forward(request, response);
@@ -67,25 +69,48 @@ public class CheckoutPageServlet extends HttpServlet {
     }
 
     private void setOrderValues(HttpServletRequest request, Order order, Map<String, String> errors) {
-        setRequiredValue(request, "firstName", errors, order::setFirstName);
-        setRequiredValue(request, "lastName", errors, order::setLastName);
-        setRequiredValue(request, "phone", errors, order::setPhone);
-        setRequiredValue(request, "address", errors, order::setAddress);
-        setRequiredValue(request, "paymentMethod", errors, s -> order.setPaymentMethod(PaymentMethod.valueOf(s)));
-        try {
-            setRequiredValue(request, DELIVERY_DATE_PARAM, errors, s -> order.setDeliveryDate(LocalDate.parse(s)));
-        } catch (DateTimeParseException e) {
-            errors.put(DELIVERY_DATE_PARAM, "Not a date");
+        setRequiredValue(request, "firstName", errors, order::setFirstName, CheckoutRegex.NAME_REGEX);
+        setRequiredValue(request, "lastName", errors, order::setLastName, CheckoutRegex.NAME_REGEX);
+        setRequiredValue(request, "phone", errors, order::setPhone, CheckoutRegex.PHONE_REGEX);
+        setRequiredValue(request, "address", errors, order::setAddress, null);
+        setRequiredValue(request, "paymentMethod", errors,
+                s -> order.setPaymentMethod(PaymentMethod.valueOf(s)), null);
+        setDeliveryDateValue(request, errors, order::setDeliveryDate);
+    }
+
+    private void setDeliveryDateValue(HttpServletRequest request, Map<String, String> errors,
+                                      Consumer<LocalDate> consumer) {
+        String value = request.getParameter(DELIVERY_DATE_PARAM);
+        if (value == null || value.isEmpty()) {
+            errors.put(DELIVERY_DATE_PARAM, "Value is required");
+        } else {
+            LocalDate userDate = LocalDate.parse(value);
+            LocalDate today = LocalDate.now();
+            if (userDate.compareTo(today) < 0) {
+                errors.put(DELIVERY_DATE_PARAM, "Sorry, it's past");
+            } else {
+                consumer.accept(userDate);
+            }
         }
     }
 
     private void setRequiredValue(HttpServletRequest request, String param, Map<String, String> errors,
-                                  Consumer<String> consumer) {
+                                  Consumer<String> consumer, CheckoutRegex regex) {
         String value = request.getParameter(param);
-        if (value == null || value.isEmpty()) {
-            errors.put(param, "Value is required");
-        } else {
+        if (isValueValid(param, errors, value, regex)) {
             consumer.accept(value);
         }
+    }
+
+    private boolean isValueValid(String param, Map<String, String> errors, String value, CheckoutRegex regex) {
+        if (value == null || value.isEmpty()) {
+            errors.put(param, "Value is required");
+            return false;
+        }
+        if (regex != null && !value.matches(regex.getRegex())) {
+            errors.put(param, regex.getRegexErrorMessage());
+            return false;
+        }
+        return true;
     }
 }
