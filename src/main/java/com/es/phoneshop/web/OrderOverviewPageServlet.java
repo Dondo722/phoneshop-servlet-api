@@ -3,7 +3,6 @@ package com.es.phoneshop.web;
 import com.es.phoneshop.dao.ArrayListOrderDao;
 import com.es.phoneshop.dao.OrderDao;
 import com.es.phoneshop.model.order.Order;
-import com.es.phoneshop.web.exception.ParseProductFromRequestException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,7 +13,7 @@ import java.io.IOException;
 public class OrderOverviewPageServlet extends HttpServlet {
 
     private OrderDao orderDao;
-    private static final String ORDER_OVERVIEW_PAGE_JSP = "/WEB-INF/pages/orderOverview.jsp";
+    private static final String ORDER_OVERVIEW_PAGE_JSP = "/WEB-INF/pages/orderCheckoutOverview.jsp";
 
 
     @Override
@@ -26,6 +25,7 @@ public class OrderOverviewPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Order order = parseOrderFromRequest(request);
+        request.setAttribute("page", "overview");
         request.setAttribute("order", order);
         request.getRequestDispatcher(ORDER_OVERVIEW_PAGE_JSP).forward(request, response);
     }
