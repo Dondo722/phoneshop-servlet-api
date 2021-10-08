@@ -86,6 +86,15 @@
     <url-pattern>/order/overview/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>advancedSearch</servlet-name>
+    <servlet-class>com.es.phoneshop.web.AdvancedSearchServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>advancedSearch</servlet-name>
+    <url-pattern>/productsSearch</url-pattern>
+  </servlet-mapping>
+
   <filter>
     <filter-name>dosFilter</filter-name>
     <filter-class>com.es.phoneshop.web.DosFilter</filter-class>
@@ -94,7 +103,6 @@
     <filter-name>dosFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-
 
   <error-page>
     <location>/WEB-INF/pages/errorOrdertNotFound.jsp</location>

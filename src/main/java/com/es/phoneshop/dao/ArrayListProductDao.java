@@ -1,11 +1,16 @@
 package com.es.phoneshop.dao;
 
+import com.es.phoneshop.dao.exception.ProductNotFoundException;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.SortField;
 import com.es.phoneshop.model.product.SortOrder;
-import com.es.phoneshop.dao.exception.ProductNotFoundException;
+import com.es.phoneshop.util.AdvancedSearchParam;
 
-import java.util.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -77,6 +82,16 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
+    public List<Product> findProducts(String query, BigDecimal minPrice, BigDecimal maxPrice,
+                                      AdvancedSearchParam param) {
+        boolean identity = param == AdvancedSearchParam.ALL_WORDS;
+        return products.stream()
+                .filter(product -> isProductPriceSuitableForQuery(product,minPrice,maxPrice))
+                .filter(product -> isProductSuitableForQuery(product, query, identity))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void save(Product product) {
         writeLock.lock();
         try {
@@ -98,6 +113,25 @@ public class ArrayListProductDao implements ProductDao {
                     .forEach(p -> p.setId(p.getId() - 1));
         } finally {
             writeLock.unlock();
+        }
+    }
+
+    private boolean isProductPriceSuitableForQuery(Product product, BigDecimal minPrice, BigDecimal maxPrice) {
+        if (minPrice != null && product.getPrice().getCurrentPrice().compareTo(minPrice) < 0) {
+                return false;
+        }
+        if (maxPrice != null && product.getPrice().getCurrentPrice().compareTo(maxPrice) > 0) {
+                return false;
+        }
+        return true;
+    }
+
+
+    private boolean isProductSuitableForQuery(Product product, String query, boolean identity) {
+        if (identity) {
+            return product.getDescription().equals(query);
+        } else {
+            return isProductSuitableForQuery(product, query);
         }
     }
 
